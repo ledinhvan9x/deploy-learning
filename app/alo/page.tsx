@@ -1,3 +1,3 @@
 export default function Alo() {
-  return <div>Alo page</div>;
+  return <div>Alo page here</div>;
 }

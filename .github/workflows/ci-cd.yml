@@ -43,3 +43,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install -g vercel@latest
+      - run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}

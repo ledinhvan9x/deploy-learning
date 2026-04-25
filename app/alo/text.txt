@@ -1,0 +1,27 @@
+1. 🔵 Preview deploy for PRs
+2. 🟡 Cache npm for faster CI
+3. 🟠 Separate staging vs production
+4. 🔴 Reusable workflows (enterprise level)
+6. Learn failure debugging
+
+Break build on purpose once.
+
+👉 Step 2: Remove duplicate install (optimization)
+
+Instead of repeating npm ci in every job → we optimize later with:
+
+shared workflow
+artifacts
+reusable steps
+
+(we’ll do this next step)
+
+👉 Step 3: Artifacts (important concept)
+
+Example:
+
+build job produces .next
+upload it
+deploy job reuses it
+
+Instead of rebuilding twice.

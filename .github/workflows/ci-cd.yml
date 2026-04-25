@@ -63,7 +63,9 @@ jobs:
         run: npm install -g vercel@latest
 
       - name: Deploy Preview to Vercel
-        run: vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          URL=$(vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }})
+          echo "Preview URL: $URL"
 
   deploy:
     if: github.event_name == 'push'

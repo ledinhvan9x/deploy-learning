@@ -1,24 +1,23 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: CI-CD
 
 on:
   push:
-    branches: ["main"]
+    branches: ["staging", "main"]
   pull_request:
-    branches: ["main"]
+    branches: ["staging", "main"]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "npm"
           cache-dependency-path: package-lock.json
+
       - run: npm ci
       - run: npm run lint
 
@@ -26,11 +25,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "npm"
           cache-dependency-path: package-lock.json
+
       - run: npm ci
       - run: npm test
 
@@ -39,11 +40,13 @@ jobs:
     needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: "npm"
           cache-dependency-path: package-lock.json
+
       - run: npm ci
       - run: npm run build
 
@@ -66,16 +69,55 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Deploy Preview to Vercel
+      - name: Deploy Preview (PR)
         run: |
           URL=$(vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }})
-          echo "Preview URL: $URL"
+          echo "PREVIEW URL: $URL"
 
-  deploy:
-    if: github.event_name == 'push'
+  deploy-staging:
+    if: github.ref == 'refs/heads/staging'
     needs: build
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - run: npm install -g vercel@latest
-      - run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy STAGING
+        run: |
+          URL=$(vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }})
+          echo "STAGING URL: $URL"
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy PRODUCTION
+        run: |
+          URL=$(vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
+          echo "PRODUCTION URL: $URL"

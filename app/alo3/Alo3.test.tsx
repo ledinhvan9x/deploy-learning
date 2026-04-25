@@ -5,6 +5,6 @@ import Alo3 from "./page";
 test("Page", () => {
   render(<Alo3 />);
   expect(
-    screen.getByRole("heading", { level: 1, name: "Alo 2 page" }),
+    screen.getByRole("heading", { level: 1, name: "Alo 3 page" }),
   ).toBeDefined();
 });

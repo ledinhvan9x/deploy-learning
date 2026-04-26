@@ -5,6 +5,6 @@ import Alo2 from "./page";
 test("Page", () => {
   render(<Alo2 />);
   expect(
-    screen.getByRole("heading", { level: 1, name: "Alo 2 page error" }),
+    screen.getByRole("heading", { level: 1, name: "Alo 2 page" }),
   ).toBeDefined();
 });
